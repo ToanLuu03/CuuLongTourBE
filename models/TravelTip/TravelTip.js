@@ -55,7 +55,6 @@ const travelTipSchema = new mongoose.Schema({
     },
     category: {
         type: String,
-        enum: ['Adventure', 'Food', 'Culture', 'Nature', 'Other'],
         default: 'Other'
     },
     createdAt: {

@@ -77,8 +77,81 @@ const getHotelById = async (req, res) => {
   }
 };
 
+// PUT /hotels/:id - Cập nhật thông tin của một khách sạn theo ID
+const updateHotel = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, address, pricePerNight, amenities, description, images, reviews, phoneNumber, facebookLink, instagramLink } = req.body;
+
+    const updatedHotel = await Hotel.findByIdAndUpdate(
+      id,
+      {
+        name,
+        address,
+        pricePerNight,
+        amenities,
+        description,
+        images,
+        reviews,
+        phoneNumber,
+        facebookLink,
+        instagramLink
+      },
+      { new: true }
+    );
+
+    if (!updatedHotel) {
+      return res.status(404).json({
+        success: false,
+        message: 'Hotel not found',
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: 'Hotel updated successfully',
+      data: updatedHotel,
+    });
+  } catch (error) {
+    res.status(400).json({
+      success: false,
+      message: 'Failed to update hotel',
+      error: error.message,
+    });
+  }
+};
+
+// DELETE /hotels/:id - Xóa một khách sạn theo ID
+const deleteHotel = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const deletedHotel = await Hotel.findByIdAndDelete(id);
+
+    if (!deletedHotel) {
+      return res.status(404).json({
+        success: false,
+        message: 'Hotel not found',
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: 'Hotel deleted successfully',
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Failed to delete hotel',
+      error: error.message,
+    });
+  }
+};
+
 module.exports = {
   getAllHotels,
   createHotel,
   getHotelById,
+  updateHotel,
+  deleteHotel,
 };
