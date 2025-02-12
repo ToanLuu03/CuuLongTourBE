@@ -24,11 +24,11 @@ const travelTipSchema = new mongoose.Schema({
             required: true
         },
         data: {
-            type: String, // Dữ liệu chính (ví dụ: văn bản, URL hình ảnh, URL video)
+            type: mongoose.Schema.Types.Mixed, // Allow mixed type for `data`
             required: function () {
                 return this.type !== 'mixed';
             }
-        },  
+        },
         caption: {
             type: String, // Chú thích (nếu có)
             trim: true
