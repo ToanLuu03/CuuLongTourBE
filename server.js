@@ -2,9 +2,10 @@ const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const connectDB = require('./config/db');
-const travelRoutes = require('./routes/Travel/Travel');
+const tourRoutes = require('./routes/Tour/Tour');
 const hotelRoutes = require('./routes/Hotel/Hotel');
-
+const travelTipRoutes = require('./routes/TravelTip/TravelTip');
+const specialtyRoutes = require('./routes/Specialty/Specialty')
 dotenv.config();
 connectDB();
 
@@ -16,7 +17,7 @@ app.use(cors());
 app.use(express.json());
 
 // Use the travel routes
-app.use('/api', travelRoutes, hotelRoutes);
+app.use('/api', tourRoutes, hotelRoutes, travelTipRoutes, specialtyRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
