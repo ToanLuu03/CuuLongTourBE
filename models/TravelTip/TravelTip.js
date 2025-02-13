@@ -21,13 +21,6 @@ const travelTipSchema = new mongoose.Schema({
             enum: ['text', 'image', 'video', 'mixed'],
             required: true
         },
-        data: {
-            type: [mongoose.Schema.Types.Mixed], // Chuyển `data` thành mảng
-            required: function () {
-                return this.type !== 'mixed';
-            },
-            default: []
-        },
         caption: {
             type: String,
             trim: true
@@ -40,7 +33,7 @@ const travelTipSchema = new mongoose.Schema({
             }
         },
         text: {
-            type: [String], // Chuyển `text` thành mảng
+            type: [String],
             trim: true
         },
         image: [{
@@ -51,7 +44,6 @@ const travelTipSchema = new mongoose.Schema({
             type: String,
             trim: true
         },
-        default: []
     }],
     location: {
         type: String,
