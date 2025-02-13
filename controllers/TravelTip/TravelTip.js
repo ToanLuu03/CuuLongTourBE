@@ -3,6 +3,22 @@ const TravelTip = require('../../models/TravelTip/TravelTip');
 // Tạo TravelTip mới
 const createTravelTip = async (req, res) => {
     try {
+        const { content } = req.body;
+
+        // Kiểm tra và đảm bảo content hợp lệ
+        if (content && Array.isArray(content)) {
+            content.forEach(item => {
+                if (item.type === 'text' || item.type === 'mixed') {
+                    if (!Array.isArray(item.text)) {
+                        item.text = item.text ? [item.text] : [];
+                    }
+                    if (!item.textTitle) {
+                        throw new Error('textTitle is required for text and mixed types');
+                    }
+                }
+            });
+        }
+
         const travelTip = new TravelTip(req.body);
         await travelTip.save();
         res.status(200).json({
@@ -46,6 +62,22 @@ const getTravelTipById = async (req, res) => {
 // Cập nhật TravelTip theo ID
 const updateTravelTip = async (req, res) => {
     try {
+        const { content } = req.body;
+
+        // Kiểm tra content nếu có
+        if (content && Array.isArray(content)) {
+            content.forEach(item => {
+                if (item.type === 'text' || item.type === 'mixed') {
+                    if (!Array.isArray(item.text)) {
+                        item.text = item.text ? [item.text] : [];
+                    }
+                    if (!item.textTitle) {
+                        throw new Error('textTitle is required for text and mixed types');
+                    }
+                }
+            });
+        }
+
         const travelTip = await TravelTip.findByIdAndUpdate(req.params.id, req.body, { new: true });
         if (!travelTip) {
             return res.status(404).json({ message: 'TravelTip not found' });

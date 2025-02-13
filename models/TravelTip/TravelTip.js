@@ -1,7 +1,5 @@
-// TravelTip.js
 const mongoose = require('mongoose');
 
-// Định nghĩa schema cho TravelTip
 const travelTipSchema = new mongoose.Schema({
     title: {
         type: String,
@@ -24,26 +22,33 @@ const travelTipSchema = new mongoose.Schema({
             required: true
         },
         data: {
-            type: mongoose.Schema.Types.Mixed, // Allow mixed type for `data`
+            type: [mongoose.Schema.Types.Mixed], // Chuyển `data` thành mảng
             required: function () {
                 return this.type !== 'mixed';
-            }
+            },
+            default: []
         },
         caption: {
-            type: String, // Chú thích (nếu có)
+            type: String,
             trim: true
         },
-        // Các trường dành riêng cho loại 'mixed'
+        textTitle: {
+            type: String,
+            trim: true,
+            required: function () {
+                return this.type === 'text' || this.type === 'mixed';
+            }
+        },
         text: {
-            type: String, // Văn bản
+            type: [String], // Chuyển `text` thành mảng
             trim: true
         },
         image: [{
-            type: String, // URL hình ảnh
+            type: String,
             trim: true
         }],
         video: {
-            type: String, // URL video
+            type: String,
             trim: true
         },
         default: []
@@ -67,7 +72,6 @@ const travelTipSchema = new mongoose.Schema({
     }
 });
 
-// Tạo model từ schema
 const TravelTip = mongoose.model('TravelTip', travelTipSchema);
 
 module.exports = TravelTip;
