@@ -22,7 +22,7 @@ const getAllTours = async (req, res) => {
 // Controller to create a new travel entry
 const createTour = async (req, res) => {
     try {
-        const { location, tour, img, price,duration, description, rating, phone, facebook, instagram, reviews } = req.body;
+        const { location, tour, img, price, duration, description, rating, phone, facebook, instagram, reviews } = req.body;
 
         const newTour = new Tour({
             location,
@@ -180,4 +180,14 @@ const addReview = async (req, res) => {
         });
     }
 };
-module.exports = { getAllTours, createTour, getTourById, updateTour, deleteTour, addReview };
+const top5Tours = async (req, res) => {
+    try {
+        const tours = await Tour.find()
+            .limit(5); 
+
+        res.status(200).json({ success: true, data: tours });
+    } catch (error) {
+        res.status(500).json({ success: false, message: 'Server error', error: error.message });
+    }
+};
+module.exports = { getAllTours, createTour, getTourById, updateTour, deleteTour, addReview, top5Tours };

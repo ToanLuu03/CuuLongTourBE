@@ -106,11 +106,20 @@ const deleteTravelTip = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
-
+// Lấy 5 travel tips mới nhất
+const get5TravelTips = async (req, res) => {
+    try {
+        const travelTips = await TravelTip.find().sort({ createdAt: -1 }).limit(5);
+        res.status(200).json(travelTips);
+    } catch (error) {
+        res.status(500).json({ message: 'Lỗi khi lấy dữ liệu', error: error.message });
+    }
+};
 module.exports = {
     createTravelTip,
     getAllTravelTips,
     getTravelTipById,
     updateTravelTip,
-    deleteTravelTip
+    deleteTravelTip,
+    get5TravelTips
 };

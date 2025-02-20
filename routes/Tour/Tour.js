@@ -1,5 +1,5 @@
 const express = require('express');
-const { getAllTours, createTour, deleteTour, getTourById, updateTour, addReview } = require('../../controllers/Tour/Tour');
+const { getAllTours, createTour, deleteTour, getTourById, updateTour, addReview, top5Tours } = require('../../controllers/Tour/Tour');
 
 const router = express.Router();
 
@@ -15,5 +15,7 @@ router.put('/update_tour_byId/:id', updateTour);
 router.delete('/delete_tour_byId/:id', deleteTour);
 // Route to add a reviews by ID
 router.post('/add_review/:id', addReview);
+// Route to get_5_tour
+router.get('/get_5_tours', top5Tours);
 // Route to render travels view
 module.exports = router;

@@ -76,5 +76,14 @@ const deleteSpecialty = async (req, res) => {
         res.status(500).json({ error: 'Server error. Please try again later.' });
     }
 };
+// Lấy 5 specialty mới nhất
+const get5Specialties = async (req, res) => {
+    try {
+        const specialties = await Specialty.find().sort({ createdAt: -1 }).limit(5);
+        res.status(200).json(specialties);
+    } catch (error) {
+        res.status(500).json({ message: 'Lỗi khi lấy dữ liệu', error: error.message });
+    }
+};
 
-module.exports = { createSpecialty, getAllSpecialties, getSpecialtyById, updateSpecialty, deleteSpecialty };
+module.exports = { createSpecialty, getAllSpecialties, getSpecialtyById, updateSpecialty, deleteSpecialty, get5Specialties };

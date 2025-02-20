@@ -147,11 +147,21 @@ const deleteHotel = async (req, res) => {
     });
   }
 };
-
+// Controller to get top 5 hotels
+const top5Hotels = async (req, res) => {
+  try {
+    const hotels = await Hotel.find()
+      .limit(5); 
+    res.status(200).json({ success: true, data: hotels });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Server error', error: error.message });
+  }
+};
 module.exports = {
   getAllHotels,
   createHotel,
   getHotelById,
   updateHotel,
   deleteHotel,
+  top5Hotels
 };
