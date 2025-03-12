@@ -1,38 +1,55 @@
 const Booking = require("../../models/Booking/Booking");
 require("dotenv").config();
+const nodemailer = require("nodemailer"); // Đảm bảo dòng này có trước
 
-// Hàm gửi email thông báo cho nhân viên
 const sendBookingEmail = async (booking) => {
     try {
+        const populatedBooking = await Booking.findById(booking._id).populate("tourId");
+
+        if (!populatedBooking || !populatedBooking.tourId) {
+            console.error("❌ Không tìm thấy thông tin tour cho booking:", booking._id);
+            return;
+        }
+
+        const { tourId } = populatedBooking;
+        const tourName = tourId.tour || "Chưa xác định";
+        const tourPrice = tourId.price ? tourId.price.toLocaleString() + " VND" : "Chưa có giá";
+        const customerName = booking.fullName || "Không có tên";
+        const customerEmail = booking.email || "Không có email";
+        const customerPhone = booking.phone || "Không có số điện thoại";
+        const numberOfPeople = booking.numberOfPeople || 1; // Mặc định 1 nếu không có giá trị
+
         const transporter = nodemailer.createTransport({
             service: "gmail",
             auth: {
-                user: process.env.EMAIL_USER, // Email nhân viên
+                user: process.env.EMAIL_ADMIN,
                 pass: process.env.EMAIL_PASS
             }
         });
 
         const mailOptions = {
-            from: process.env.EMAIL_USER,    // Email nhân viên gửi đi
-            to: process.env.EMAIL_USER,      // Nhận email từ chính mình
-            replyTo: process.env.EMAIL_USER, // Khi trả lời, email cũng quay về chính họ
-            subject: "🛎️ ĐẶT TOUR MỚI!",
+            from: process.env.EMAIL_ADMIN,
+            to: [customerEmail, "cuulongvivu@gmail.com"], 
+            replyTo: process.env.EMAIL_ADMIN,
+            subject: "🛎️ Xác nhận đặt tour",
             html: `
-                <h2>Thông tin đặt tour mới</h2>
-                <p><strong>Khách hàng:</strong> ${booking.name} (${booking.email})</p>
-                <p><strong>Tour:</strong> ${booking.tourId}</p>
-                <p><strong>Ngày khởi hành:</strong> ${booking.startDate}</p>
-                <p><strong>Giá:</strong> ${booking.price.toLocaleString()} VND</p>
-                <p><strong>Số lượng:</strong> ${booking.quantity} người</p>
+                <h2>Thông tin đặt tour</h2>
+                <p><strong>Khách hàng:</strong> ${customerName} (${customerEmail})</p>
+                <p><strong>Tour:</strong> ${tourName}</p>
+                <p><strong>Giá:</strong> ${tourPrice}</p>
+                <p><strong>Số điện thoại:</strong> ${customerPhone}</p>
+                <p><strong>Số lượng người:</strong> ${numberOfPeople} người</p>
+                <p>Cảm ơn bạn đã đặt tour với chúng tôi! 🎉</p>
             `
         };
 
         await transporter.sendMail(mailOptions);
-        console.log("✅ Email booking đã được gửi cho nhân viên!");
+        console.log("✅ Email booking đã được gửi tới khách hàng và cuulongvivu@gmail.com!");
     } catch (error) {
         console.error("❌ Lỗi gửi email:", error);
     }
 };
+
 // Đặt tour mới
 const createBooking = async (req, res) => {
     try {
