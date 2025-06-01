@@ -20,7 +20,8 @@ const specialtySchema = new mongoose.Schema({
         phone: { type: String },  // Số điện thoại liên hệ
         email: { type: String },  // Email liên hệ
         address: { type: String } // Địa chỉ liên hệ
-    }
+    },
+     qrUrl: { type: String }
 }, { timestamps: true });
 
 module.exports = mongoose.model('Specialty', specialtySchema);
