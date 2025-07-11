@@ -183,11 +183,45 @@ const addReview = async (req, res) => {
 const top5Tours = async (req, res) => {
     try {
         const tours = await Tour.find()
-            .limit(5); 
+            .limit(5);
 
         res.status(200).json({ success: true, data: tours });
     } catch (error) {
         res.status(500).json({ success: false, message: 'Server error', error: error.message });
     }
 };
-module.exports = { getAllTours, createTour, getTourById, updateTour, deleteTour, addReview, top5Tours };
+const getToursByLocation = async (req, res) => {
+    try {
+        const { location } = req.query;
+
+        if (!location) {
+            return res.status(400).json({
+                success: false,
+                message: 'Thiếu tham số location',
+            });
+        }
+
+        // Chỉ lấy các _id của tour phù hợp
+        const tourIds = await Tour.find({
+            location: { $regex: new RegExp(location, 'i') }
+        })
+        .select('_id') // Chỉ lấy trường _id
+        .limit(10) // Giới hạn số lượng kết quả
+        .lean(); // Chuyển sang plain JavaScript object
+
+        // Trích xuất mảng chỉ chứa các _id
+        const ids = tourIds.map(tour => tour._id);
+
+        res.status(200).json({
+            success: true,
+            data: ids, // Trả về mảng các _id
+        });
+    } catch (error) {
+        console.error('Lỗi khi lấy ID tour:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Lỗi server',
+        });
+    }
+};
+module.exports = { getAllTours, createTour, getTourById, updateTour, deleteTour, addReview, top5Tours, getToursByLocation };
